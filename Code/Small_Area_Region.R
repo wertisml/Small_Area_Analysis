@@ -7,9 +7,9 @@ library(lubridate)
 library(gnm)
 library(scales)
 
-setwd("~/Gasparini/Files/Regions")
+setwd("~/Small_Area_Analysis/Files")
 
-filter_data <- function(Sex = NULL, age = NULL, Race = NULL, region = NULL, outcome_column = NULL) {
+filter_data <- function(Sex = NULL, age = NULL, Race = NULL, Region = NULL, outcome_column = NULL) {
   
   # Generate file name based on input
   file_name <- paste0("Sheps_Temp_Regions", 
@@ -19,20 +19,20 @@ filter_data <- function(Sex = NULL, age = NULL, Race = NULL, region = NULL, outc
   
   filtered_data <- open_dataset(file_name) %>%
     mutate(month = month(Date)) %>%
-    filter(Zip != 28668, Zip != 28652, Zip != 28629, Zip != 28672, Zip != 28720, 
-           Zip != 28733, Zip != 28735, Zip != 28662, Zip != 28663, Zip != 28749,
-           Zip != 28702, Zip != 28757,
-           Zip != 28282, Zip != 28244, Zip != 27110, Zip != 27340, Zip != 28007,
-           Zip != 28102, Zip != 28089, Zip != 28280, Zip != 27201, Zip != 27556,
-           Zip != 28109, Zip != 27582, Zip != 27109,
-           Zip != 28308, Zip != 27531, Zip != 27861, Zip != 27841, Zip != 27881,
-           Zip != 27916, Zip != 27950, Zip != 27943, Zip != 27978, Zip != 27985,
-           Zip != 28310, Zip != 28520, Zip != 28524, Zip != 28552, Zip != 28589,
-           Zip != 28587, Zip != 27927, Zip != 28375, Zip != 28528, Zip != 28533,
-           Zip != 28537, Zip != 27842, Zip != 27872, Zip != 27964, Zip != 27965, 
-           Zip != 27968, Zip != 28424, Zip != 28577, Zip != 28583, Zip != 27960,
-           Zip != 28342, Zip != 28543, Zip != 28547, Zip != 28581, Zip != 27926,
-           Zip != 28553, Zip != 27956) %>%
+    # filter(Zip != 28668, Zip != 28652, Zip != 28629, Zip != 28672, Zip != 28720, 
+    #        Zip != 28733, Zip != 28735, Zip != 28662, Zip != 28663, Zip != 28749,
+    #        Zip != 28702, Zip != 28757,
+    #        Zip != 28282, Zip != 28244, Zip != 27110, Zip != 27340, Zip != 28007,
+    #        Zip != 28102, Zip != 28089, Zip != 28280, Zip != 27201, Zip != 27556,
+    #        Zip != 28109, Zip != 27582, Zip != 27109,
+    #        Zip != 28308, Zip != 27531, Zip != 27861, Zip != 27841, Zip != 27881,
+    #        Zip != 27916, Zip != 27950, Zip != 27943, Zip != 27978, Zip != 27985,
+    #        Zip != 28310, Zip != 28520, Zip != 28524, Zip != 28552, Zip != 28589,
+    #        Zip != 28587, Zip != 27927, Zip != 28375, Zip != 28528, Zip != 28533,
+    #        Zip != 28537, Zip != 27842, Zip != 27872, Zip != 27964, Zip != 27965, 
+    #        Zip != 27968, Zip != 28424, Zip != 28577, Zip != 28583, Zip != 27960,
+    #        Zip != 28342, Zip != 28543, Zip != 28547, Zip != 28581, Zip != 27926,
+    #        Zip != 28553, Zip != 27956) %>%
     arrange(Zip) %>%
     collect() %>%
     mutate(loc = cumsum(c(1,as.numeric(diff(Zip))!=0)),
@@ -42,7 +42,7 @@ filter_data <- function(Sex = NULL, age = NULL, Race = NULL, region = NULL, outc
            dow = wday(Date)) %>%
     rename(Outcome = !!outcome_column,
            temp = TAVG) %>%
-    select(Date, temp, RH, Outcome, Zip, loc, Region, doy, year, month, dow, 
+    select(Date, temp, RH, Outcome, Zip, loc, region, doy, year, month, dow, 
            if (!is.null(Sex)) paste0("sex"),
            if (!is.null(age)) paste0("Age"), 
            if (!is.null(Race)) paste0("race")) %>%
@@ -54,7 +54,7 @@ filter_data <- function(Sex = NULL, age = NULL, Race = NULL, region = NULL, outc
   
   if (!is.null(Race)) {filtered_data <- filtered_data %>%filter(race == Race)}
   
-  if (!is.null(region)) {filtered_data <- filtered_data %>%filter(Region == region)}
+  if (!is.null(Region)) {filtered_data <- filtered_data %>%filter(region == Region)}
   
   return(filtered_data)
 } 
@@ -62,8 +62,8 @@ filter_data <- function(Sex = NULL, age = NULL, Race = NULL, region = NULL, outc
 Data <- filter_data(Sex = "F",                          # This can be either M or F       
                     #age = 4,                            # This can be any value between 1 & 4 1 = 0-25, 2 = 26- 46, 3 = 47-65, 4 = 66+       
                     #Race = 3,                           # This can be any value between 1-5      
-                    region = "Coast",                # This can be Mountains, Piedmont, or Coast
-                    outcome_column = "Anxiety"     # This can be Mental_Health, Substance, Mood, Anxiety  
+                    Region = "Coast",                # This can be Mountains, Piedmont, or Coast
+                    outcome_column = "Mental_Health"     # This can be Mental_Health, Substance, Mood, Anxiety  
 )
 
 
@@ -75,7 +75,10 @@ Data <- Data[complete.cases(Data),]
 # Build DLNM and pooled model
 #==============================================================================#
 
-source("/home/students/wertisml/Gasparini/Code/Regions/small_area_calculation.R")
+# you can specify how many days of lag you want
+Lag_value <- 7
+
+source("~/Small_Area_Analysis/Code/small_area_calculation.R")
 
 #==============================================================================#
 # RR Results

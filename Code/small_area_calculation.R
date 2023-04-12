@@ -1,3 +1,18 @@
+# create a list of Zip-year combinations
+group <- factor(paste(Data$Zip, Data$year, sep="-"))
+
+# Calculate number of occurrences for each Zip-year combination
+table <- data.table(table(group)) 
+
+# Extract only the Zip code and leave the year
+table$Zip <- as.numeric(sub("-.*", "", table$group))
+
+# Filter out results with fewer than 7 occurrences
+table <- table[table$N <= Lag_value,]
+
+Data <- Data %>%
+  filter(! Zip %in% table$Zip)
+
 # DEFINE SPLINES OF DAY OF THE YEAR
 spldoy <- onebasis(Data$doy, "ns", df=3)
 
@@ -10,8 +25,9 @@ argvar <- list(fun="ns", knots=knots)
 arglag <- list(fun="ns", knots=1)
 
 group <- factor(paste(Data$Zip, Data$year, sep="-"))
+
 #table <- data.table(table(group))
-cbtmean <- crossbasis(Data$temp, lag=7, argvar=argvar, arglag=arglag,
+cbtmean <- crossbasis(Data$temp, lag=Lag_value, argvar=argvar, arglag=arglag,
                       group=group)
 #summary(cbtmean)
 

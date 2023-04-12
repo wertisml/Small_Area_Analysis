@@ -1,7 +1,7 @@
 library(tidyverse)
 library(arrow)
 
-setwd("~/Gasparini/Code/File_Creation/Pre_Datasets")
+setwd("~/Small_Area_Analysis/Files/File_Creation/Pre_Datasets")
 Regions <- read_csv("Regions.csv")
 
 #==============================================================================#
@@ -29,10 +29,10 @@ Coast <- Regions %>%
 
 Data <- left_join(open_dataset("NC_Heatwave_ML.parquet") %>%
                     select(Zip, Date, TAVG, TMAX, TMIN, RH),
-                  open_dataset(source = "Sheps_for_gasparini.parquet") %>%
+                  open_dataset("Sheps_for_Gasparini.parquet") %>%
                     rename(Date = admitdt,
                            Zip = zip5) %>%
-                    group_by(Zip, Date, sex) %>%
+                    group_by(Zip, Date) %>%
                     summarise(Mental_Health = sum(Mental_Health),
                               Substance = sum(Substance),
                               Schizophrenia = sum(Schizophrenia),
@@ -45,18 +45,21 @@ Data <- left_join(open_dataset("NC_Heatwave_ML.parquet") %>%
                               Emotional = sum(Emotional)),
                   by = c("Zip", "Date")) %>%
   collect() %>% 
-  filter(Date >= "2016-01-01", Date <= "2019-10-01") %>%
+  filter(Date >= "2016-01-01", Date <= "2019-12-31") %>%
   replace(is.na(.), 0) %>%
   mutate(region = ifelse(Zip %in% Mountains$ZCTA, "Mountains",
                          ifelse(Zip %in% Piedmont$ZCTA, "Piedmont",
-                                ifelse(Zip %in% Coast$ZCTA, "Coast", ""))))
+                                ifelse(Zip %in% Coast$ZCTA, "Coast", "")))) 
+
+# Data$Age <- fifelse(Data$agey <= 25, 1,
+#               fifelse(Data$agey > 25 & Data$agey <= 49, 2,
+#                 fifelse(Data$agey > 49 & Data$agey <= 64, 3,
+#                   4)))
 
 #==============================================================================#
 # Finalize
 #==============================================================================#
 
-Data <- Data[complete.cases(Data),]
-
-setwd("~/Gasparini/Files/Regions")
-write_parquet(Regions, "Sheps_Temp_Regions_Sex.parquet")
+setwd("~/Small_Area_Analysis/Files")
+write_parquet(Data, "Sheps_Temp_Regions.parquet")
 
