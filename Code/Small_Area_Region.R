@@ -6,6 +6,8 @@ library(splines)
 library(lubridate)
 library(gnm)
 library(scales)
+library(arrow)
+library(data.table)
 
 setwd("~/Small_Area_Analysis/Files")
 
@@ -19,20 +21,6 @@ filter_data <- function(Sex = NULL, age = NULL, Race = NULL, Region = NULL, outc
   
   filtered_data <- open_dataset(file_name) %>%
     mutate(month = month(Date)) %>%
-    # filter(Zip != 28668, Zip != 28652, Zip != 28629, Zip != 28672, Zip != 28720, 
-    #        Zip != 28733, Zip != 28735, Zip != 28662, Zip != 28663, Zip != 28749,
-    #        Zip != 28702, Zip != 28757,
-    #        Zip != 28282, Zip != 28244, Zip != 27110, Zip != 27340, Zip != 28007,
-    #        Zip != 28102, Zip != 28089, Zip != 28280, Zip != 27201, Zip != 27556,
-    #        Zip != 28109, Zip != 27582, Zip != 27109,
-    #        Zip != 28308, Zip != 27531, Zip != 27861, Zip != 27841, Zip != 27881,
-    #        Zip != 27916, Zip != 27950, Zip != 27943, Zip != 27978, Zip != 27985,
-    #        Zip != 28310, Zip != 28520, Zip != 28524, Zip != 28552, Zip != 28589,
-    #        Zip != 28587, Zip != 27927, Zip != 28375, Zip != 28528, Zip != 28533,
-    #        Zip != 28537, Zip != 27842, Zip != 27872, Zip != 27964, Zip != 27965, 
-    #        Zip != 27968, Zip != 28424, Zip != 28577, Zip != 28583, Zip != 27960,
-    #        Zip != 28342, Zip != 28543, Zip != 28547, Zip != 28581, Zip != 27926,
-    #        Zip != 28553, Zip != 27956) %>%
     arrange(Zip) %>%
     collect() %>%
     mutate(loc = cumsum(c(1,as.numeric(diff(Zip))!=0)),
@@ -46,7 +34,7 @@ filter_data <- function(Sex = NULL, age = NULL, Race = NULL, Region = NULL, outc
            if (!is.null(Sex)) paste0("sex"),
            if (!is.null(age)) paste0("Age"), 
            if (!is.null(Race)) paste0("race")) %>%
-    as.data.table()
+    collect()
   
   if (!is.null(Sex)) {filtered_data <- filtered_data %>%filter(sex == Sex)}
   

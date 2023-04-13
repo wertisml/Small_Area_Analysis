@@ -1,3 +1,7 @@
+#==============================================================================#
+# Create a method to identify Zip Codes that will have fewer cases then needed to work
+#==============================================================================#
+
 # create a list of Zip-year combinations
 group <- factor(paste(Data$Zip, Data$year, sep="-"))
 
@@ -12,6 +16,10 @@ table <- table[table$N <= Lag_value,]
 
 Data <- Data %>%
   filter(! Zip %in% table$Zip)
+
+#==============================================================================#
+# Perform the DLNM small area aproach with the now filtered data
+#==============================================================================#
 
 # DEFINE SPLINES OF DAY OF THE YEAR
 spldoy <- onebasis(Data$doy, "ns", df=3)
