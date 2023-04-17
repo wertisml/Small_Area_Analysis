@@ -34,7 +34,6 @@ arglag <- list(fun="ns", knots=1)
 
 group <- factor(paste(Data$Zip, Data$year, sep="-"))
 
-#table <- data.table(table(group))
 cbtmean <- crossbasis(Data$temp, lag=Lag_value, argvar=argvar, arglag=arglag,
                       group=group)
 #summary(cbtmean)

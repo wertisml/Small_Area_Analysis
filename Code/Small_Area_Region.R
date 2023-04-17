@@ -9,7 +9,7 @@ library(scales)
 library(arrow)
 library(data.table)
 
-setwd("~/Small_Area_Analysis/Files")
+setwd("~/Small_Area_Analysis/Files/Outcomes_for_Analysis")
 
 filter_data <- function(Sex = NULL, age = NULL, Race = NULL, Region = NULL, outcome_column = NULL) {
   
