@@ -51,3 +51,6 @@ rsconnect/
 # files types
 *.parquet
 *.sas7bdat
+
+# Ignore this entire directory
+Files/Outcomes_for_Analysis/
