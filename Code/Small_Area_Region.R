@@ -47,7 +47,7 @@ filter_data <- function(Sex = NULL, age = NULL, Race = NULL, Region = NULL, outc
   return(filtered_data)
 } 
 
-Data <- filter_data(Sex = "F",                          # This can be either M or F       
+Data <- filter_data(#Sex = "F",                          # This can be either M or F       
                     #age = 4,                            # This can be any value between 1 & 4 1 = 0-25, 2 = 26- 46, 3 = 47-65, 4 = 66+       
                     #Race = 3,                           # This can be any value between 1-5      
                     Region = "Coast",                # This can be Mountains, Piedmont, or Coast
@@ -72,9 +72,9 @@ source("~/Small_Area_Analysis/Code/small_area_calculation.R")
 # RR Results
 #==============================================================================#
 
-redpred <- crossreduce(cbtmean, modfull, cen=mean(Data$temp, na.rm=T))
+redpred <- crossreduce(cbtmean, modfull, cen=median(Data$temp, na.rm=T))
 lines <- quantile(Data$temp, c(2.5,50,97.5)/100, na.rm=T)
-pred <- crosspred(cbtmean, modfull, cen = mean(Data$temp, na.rm=T),
+pred <- crosspred(cbtmean, modfull, cen = median(Data$temp, na.rm=T),
                   at=c(lines[1],redpred$cen,lines[3]))
 #plot(pred)
 data.frame(pred[14:16])
@@ -84,7 +84,7 @@ data.frame(pred[14:16])
 #==============================================================================#
 
 # Take a screen shot of each plot run and get it named for what its showing
-redpred <- crossreduce(cbtmean, modfull, cen=mean(Data$temp, na.rm=T))
+redpred <- crossreduce(cbtmean, modfull, cen=median(Data$temp, na.rm=T))
 lines <- quantile(Data$temp, c(2.5,50,97.5)/100, na.rm=T)
 col <- c("red", "gray50")
 

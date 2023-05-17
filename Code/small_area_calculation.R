@@ -47,4 +47,4 @@ Data[,  keep:=sum(Outcome)>0, by=stratum]
 modfull <- gnm(Outcome ~ cbtmean + ns(RH, df = 2) + spldoy:factor(year) + factor(dow), 
                eliminate=stratum, data=Data, family=quasipoisson, subset=keep)
 
-cpfull <- crosspred(cbtmean, modfull, cen=mean(Data$temp, na.rm=T))
+cpfull <- crosspred(cbtmean, modfull, cen=median(Data$temp, na.rm=T))
