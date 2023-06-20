@@ -36,7 +36,6 @@ group <- factor(paste(Data$Zip, Data$year, sep="-"))
 
 cbtmean <- crossbasis(Data$temp, lag=Lag_value, argvar=argvar, arglag=arglag,
                       group=group)
-#summary(cbtmean)
 
 # DEFINE THE STRATA 
 Data[, stratum:=factor(paste(Zip, year, month, sep=":"))]
